@@ -12,6 +12,9 @@ const (
 
 	// MemStoreKey defines the in-memory store key
 	MemStoreKey = "mem_cosmoeth"
+
+	// StateKey defines the state store prefix key
+	StateKey = "state"
 )
 
 func KeyPrefix(p string) []byte {

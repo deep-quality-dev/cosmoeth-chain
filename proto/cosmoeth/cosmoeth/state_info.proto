@@ -1,0 +1,14 @@
+syntax = "proto3";
+package cosmoeth.cosmoeth;
+
+option go_package = "CosmoEth/x/cosmoeth/types";
+
+message StateInfo {
+  
+  string address = 1; 
+  string slot = 2; 
+  uint64 height = 3; 
+  string value = 4; 
+  string root = 5; 
+  repeated string proofs = 6; 
+}

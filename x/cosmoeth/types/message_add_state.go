@@ -6,6 +6,7 @@ import (
 	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/ethereum/go-ethereum/common"
 )
 
 const TypeMsgAddState = "add_state"
@@ -49,7 +50,7 @@ func (msg *MsgAddState) ValidateBasic() error {
 		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid creator address (%s)", err)
 	}
 
-	if !utils.IsEthereumAddress(msg.Address) {
+	if !common.IsHexAddress(msg.Address) {
 		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid ethereum address")
 	}
 
