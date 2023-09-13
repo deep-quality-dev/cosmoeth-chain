@@ -1,7 +1,20 @@
 syntax = "proto3";
+
 package cosmoeth.cosmoeth;
 
 option go_package = "CosmoEth/x/cosmoeth/types";
 
 // Msg defines the Msg service.
-service Msg {}
+service Msg {
+  rpc AddState (MsgAddState) returns (MsgAddStateResponse);
+}
+message MsgAddState {
+           string creator      = 1;
+           string address      = 2;
+  repeated string slots        = 3;
+  repeated string values       = 4;
+           string storageProof = 5;
+}
+
+message MsgAddStateResponse {}
+

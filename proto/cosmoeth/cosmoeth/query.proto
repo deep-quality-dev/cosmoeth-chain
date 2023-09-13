@@ -1,4 +1,5 @@
 syntax = "proto3";
+
 package cosmoeth.cosmoeth;
 
 import "gogoproto/gogo.proto";
@@ -10,17 +11,33 @@ option go_package = "CosmoEth/x/cosmoeth/types";
 
 // Query defines the gRPC querier service.
 service Query {
+  
   // Parameters queries the parameters of the module.
-  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+  rpc Params (QueryParamsRequest) returns (QueryParamsResponse) {
     option (google.api.http).get = "/CosmoEth/cosmoeth/params";
+  
+  }
+  
+  // Queries a list of StateValue items.
+  rpc StateValue (QueryStateValueRequest) returns (QueryStateValueResponse) {
+    option (google.api.http).get = "/CosmoEth/cosmoeth/state_value/{address}/{slot}";
+  
   }
 }
-
 // QueryParamsRequest is request type for the Query/Params RPC method.
 message QueryParamsRequest {}
 
 // QueryParamsResponse is response type for the Query/Params RPC method.
 message QueryParamsResponse {
+  
   // params holds all the parameters of this module.
   Params params = 1 [(gogoproto.nullable) = false];
 }
+
+message QueryStateValueRequest {
+  string address = 1;
+  string slot    = 2;
+}
+
+message QueryStateValueResponse {}
+
