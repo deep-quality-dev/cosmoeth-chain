@@ -12,7 +12,8 @@ message MsgAddState {
            string creator       = 1;
            string address       = 2;
            uint64 height        = 3;
-  repeated string storageProofs = 4;
+           string root          = 4;
+  repeated string storageProofs = 5;
 }
 
 message MsgAddStateResponse {}

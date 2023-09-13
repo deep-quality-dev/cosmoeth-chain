@@ -16,7 +16,7 @@ var _ = strconv.Itoa(0)
 
 func CmdAddState() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "add-state [address] [height] [storage-proofs]",
+		Use:   "add-state [address] [height] [root] [storage-proofs]",
 		Short: "Broadcast message add-state",
 		Args:  cobra.ExactArgs(4),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
@@ -25,7 +25,8 @@ func CmdAddState() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			argStorageProofs := strings.Split(args[2], listSeparator)
+			argRoot := args[2]
+			argStorageProofs := strings.Split(args[3], listSeparator)
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -36,6 +37,7 @@ func CmdAddState() *cobra.Command {
 				clientCtx.GetFromAddress().String(),
 				argAddress,
 				uint64(argHeight),
+				argRoot,
 				argStorageProofs,
 			)
 			if err := msg.ValidateBasic(); err != nil {

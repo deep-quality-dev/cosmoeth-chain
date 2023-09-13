@@ -11,11 +11,12 @@ const TypeMsgAddState = "add_state"
 
 var _ sdk.Msg = &MsgAddState{}
 
-func NewMsgAddState(creator string, address string, height uint64, storageProofs []string) *MsgAddState {
+func NewMsgAddState(creator string, address string, height uint64, root string, storageProofs []string) *MsgAddState {
 	return &MsgAddState{
 		Creator:       creator,
 		Address:       address,
 		Height:        height,
+		Root:          root,
 		StorageProofs: storageProofs,
 	}
 }
@@ -53,6 +54,10 @@ func (msg *MsgAddState) ValidateBasic() error {
 
 	if msg.Height == 0 {
 		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "zero block number")
+	}
+
+	if len(common.FromHex(msg.Root)) == 0 {
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid root")
 	}
 
 	if len(msg.StorageProofs) == 0 {

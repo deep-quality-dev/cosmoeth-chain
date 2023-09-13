@@ -29,15 +29,33 @@ func (k Keeper) CheckStateValidity(ctx sdk.Context, stateInfo types.StateInfo) (
 	return utils.VerifyProof(common.HexToHash(stateInfo.Root), stateInfo.Slot, value, stateInfo.Proofs)
 }
 
-func (k Keeper) AddStateInfo(ctx sdk.Context, address string, slot string, rawInfo string) error {
+func (k Keeper) AddStateInfo(ctx sdk.Context, address string, root string, height uint64, storageProofs []string) error {
+	for _, proof := range storageProofs {
+		storageProof := types.StorageProof{}
+		err := json.Unmarshal([]byte(proof), &storageProof)
+		if err != nil {
+			return errors.Wrap(sdkerrors.ErrJSONUnmarshal, err.Error())
+		}
+
+		err = k.SetStateInfoWithValidation(ctx, address, root, height, storageProof)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (k Keeper) SetStateInfoWithValidation(ctx sdk.Context, address string, root string, height uint64, storageProof types.StorageProof) error {
 	store := ctx.KVStore(k.storeKey)
 	prefixStore := prefix.NewStore(store, types.KeyPrefix(types.StateKey))
 
-	// unmarshal raw state info to proto object
-	stateInfo := types.StateInfo{}
-	err := json.Unmarshal([]byte(rawInfo), &stateInfo)
-	if err != nil {
-		return errors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+	stateInfo := types.StateInfo{
+		Address: address,
+		Slot:    storageProof.Key,
+		Height:  height,
+		Value:   storageProof.Value,
+		Root:    root,
+		Proofs:  storageProof.Proof,
 	}
 
 	// check validity of submitted state info
@@ -49,8 +67,13 @@ func (k Keeper) AddStateInfo(ctx sdk.Context, address string, slot string, rawIn
 		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "state validation failed")
 	}
 
+	rawStateInfo, err := json.Marshal(stateInfo)
+	if err != nil {
+		return errors.Wrapf(sdkerrors.ErrJSONMarshal, err.Error())
+	}
+
 	// save state info into the store
-	prefixStore.Set(append(types.KeyPrefix(address), types.KeyPrefix(slot)...), []byte(rawInfo))
+	prefixStore.Set(append(types.KeyPrefix(address), types.KeyPrefix(storageProof.Key)...), []byte(rawStateInfo))
 	return nil
 }
 

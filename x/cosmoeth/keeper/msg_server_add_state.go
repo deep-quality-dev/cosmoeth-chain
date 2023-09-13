@@ -11,8 +11,10 @@ import (
 func (k msgServer) AddState(goCtx context.Context, msg *types.MsgAddState) (*types.MsgAddStateResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// TODO: Handling the message
-	_ = ctx
+	err := k.AddStateInfo(ctx, msg.Address, msg.Root, msg.Height, msg.StorageProofs)
+	if err != nil {
+		return nil, err
+	}
 
 	return &types.MsgAddStateResponse{}, nil
 }

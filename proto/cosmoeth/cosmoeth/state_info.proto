@@ -3,8 +3,7 @@ package cosmoeth.cosmoeth;
 
 option go_package = "CosmoEth/x/cosmoeth/types";
 
-message StateInfo {
-  
+message StateInfo {  
   string address = 1; 
   string slot = 2; 
   uint64 height = 3; 

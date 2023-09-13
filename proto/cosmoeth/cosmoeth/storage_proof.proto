@@ -1,0 +1,10 @@
+syntax = "proto3";
+package cosmoeth.cosmoeth;
+
+option go_package = "CosmoEth/x/cosmoeth/types";
+
+message StorageProof {
+  string key = 1; 
+  string value = 2; 
+  repeated string proof = 3; 
+}
