@@ -39,5 +39,8 @@ message QueryStateValueRequest {
   string slot    = 2;
 }
 
-message QueryStateValueResponse {}
+message QueryStateValueResponse {
+  string value = 1;
+  uint64 height = 2;
+}
 

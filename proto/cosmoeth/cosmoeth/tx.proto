@@ -9,11 +9,10 @@ service Msg {
   rpc AddState (MsgAddState) returns (MsgAddStateResponse);
 }
 message MsgAddState {
-           string creator      = 1;
-           string address      = 2;
-  repeated string slots        = 3;
-  repeated string values       = 4;
-           string storageProof = 5;
+           string creator       = 1;
+           string address       = 2;
+           uint64 height        = 3;
+  repeated string storageProofs = 4;
 }
 
 message MsgAddStateResponse {}

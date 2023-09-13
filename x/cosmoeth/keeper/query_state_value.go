@@ -17,8 +17,12 @@ func (k Keeper) StateValue(goCtx context.Context, req *types.QueryStateValueRequ
 
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	// TODO: Process the query
-	_ = ctx
+	stateInfo := k.GetStateInfo(ctx, req.Address, req.Slot)
 
-	return &types.QueryStateValueResponse{}, nil
+	resp := types.QueryStateValueResponse{
+		Value:  stateInfo.Value,
+		Height: stateInfo.Height,
+	}
+
+	return &resp, nil
 }

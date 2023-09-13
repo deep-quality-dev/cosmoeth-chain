@@ -1,8 +1,6 @@
 package types
 
 import (
-	"CosmoEth/utils"
-
 	"cosmossdk.io/errors"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -13,13 +11,12 @@ const TypeMsgAddState = "add_state"
 
 var _ sdk.Msg = &MsgAddState{}
 
-func NewMsgAddState(creator string, address string, slots []string, values []string, storageProof string) *MsgAddState {
+func NewMsgAddState(creator string, address string, height uint64, storageProofs []string) *MsgAddState {
 	return &MsgAddState{
-		Creator:      creator,
-		Address:      address,
-		Slots:        slots,
-		Values:       values,
-		StorageProof: storageProof,
+		Creator:       creator,
+		Address:       address,
+		Height:        height,
+		StorageProofs: storageProofs,
 	}
 }
 
@@ -54,20 +51,12 @@ func (msg *MsgAddState) ValidateBasic() error {
 		return errors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid ethereum address")
 	}
 
-	for _, slot := range msg.Slots {
-		if !utils.IsValidHexString(slot) {
-			return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid storage slot")
-		}
+	if msg.Height == 0 {
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "zero block number")
 	}
 
-	for _, val := range msg.Values {
-		if !utils.IsValidHexString(val) {
-			return errors.Wrapf(sdkerrors.ErrInvalidRequest, "invalid state value")
-		}
-	}
-
-	if len(msg.StorageProof) == 0 {
-		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "empty storage proof")
+	if len(msg.StorageProofs) == 0 {
+		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "empty storage proofs")
 	}
 	return nil
 }

@@ -4,25 +4,28 @@ import (
 	"strconv"
 
 	"CosmoEth/x/cosmoeth/types"
+	"strings"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/client/flags"
 	"github.com/cosmos/cosmos-sdk/client/tx"
 	"github.com/spf13/cobra"
-	"strings"
 )
 
 var _ = strconv.Itoa(0)
 
 func CmdAddState() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "add-state [address] [slots] [values] [storage-proof]",
+		Use:   "add-state [address] [height] [storage-proofs]",
 		Short: "Broadcast message add-state",
 		Args:  cobra.ExactArgs(4),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
 			argAddress := args[0]
-			argSlots := strings.Split(args[1], listSeparator)
-			argValues := strings.Split(args[2], listSeparator)
-			argStorageProof := args[3]
+			argHeight, err := strconv.Atoi(args[1])
+			if err != nil {
+				return err
+			}
+			argStorageProofs := strings.Split(args[2], listSeparator)
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -32,9 +35,8 @@ func CmdAddState() *cobra.Command {
 			msg := types.NewMsgAddState(
 				clientCtx.GetFromAddress().String(),
 				argAddress,
-				argSlots,
-				argValues,
-				argStorageProof,
+				uint64(argHeight),
+				argStorageProofs,
 			)
 			if err := msg.ValidateBasic(); err != nil {
 				return err
