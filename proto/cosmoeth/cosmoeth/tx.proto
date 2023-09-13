@@ -1,0 +1,7 @@
+syntax = "proto3";
+package cosmoeth.cosmoeth;
+
+option go_package = "CosmoEth/x/cosmoeth/types";
+
+// Msg defines the Msg service.
+service Msg {}

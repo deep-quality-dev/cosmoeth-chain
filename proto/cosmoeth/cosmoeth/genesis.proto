@@ -1,0 +1,12 @@
+syntax = "proto3";
+package cosmoeth.cosmoeth;
+
+import "gogoproto/gogo.proto";
+import "cosmoeth/cosmoeth/params.proto";
+
+option go_package = "CosmoEth/x/cosmoeth/types";
+
+// GenesisState defines the cosmoeth module's genesis state.
+message GenesisState {
+  Params params = 1 [(gogoproto.nullable) = false];
+}
