@@ -49,6 +49,12 @@ paths:
           description: A successful response.
           schema:
             type: object
+            properties:
+              value:
+                type: string
+              height:
+                type: string
+                format: uint64
         default:
           description: An unexpected error response.
           schema:
@@ -46526,6 +46532,12 @@ definitions:
     description: QueryParamsResponse is response type for the Query/Params RPC method.
   cosmoeth.cosmoeth.QueryStateValueResponse:
     type: object
+    properties:
+      value:
+        type: string
+      height:
+        type: string
+        format: uint64
   google.protobuf.Any:
     type: object
     properties:

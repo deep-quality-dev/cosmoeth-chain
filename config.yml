@@ -1,4 +1,6 @@
 version: 1
+build:
+  main: cmd/CosmoEthd
 accounts:
 - name: alice
   coins:
