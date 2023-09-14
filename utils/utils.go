@@ -28,7 +28,7 @@ func VerifyProof(rootHash common.Hash, key string, value []byte, proofs []string
 		proofDB.Put(key, node)
 	}
 
-	path := crypto.Keccak256(common.FromHex(key))
+	path := crypto.Keccak256(common.LeftPadBytes(common.FromHex(key), 32))
 
 	res, err := trie.VerifyProof(rootHash, path, proofDB)
 	if err != nil {
