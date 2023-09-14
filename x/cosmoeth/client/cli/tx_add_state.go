@@ -26,7 +26,7 @@ func CmdAddState() *cobra.Command {
 				return err
 			}
 			argRoot := args[2]
-			argStorageProofs := strings.Split(args[3], listSeparator)
+			argStorageProofs := strings.Split(args[3], ";")
 
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {

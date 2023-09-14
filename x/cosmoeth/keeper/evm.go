@@ -61,7 +61,7 @@ func (k Keeper) SetStateInfoWithValidation(ctx sdk.Context, address string, root
 	// check validity of submitted state info
 	isValid, err := k.CheckStateValidity(ctx, stateInfo)
 	if err != nil {
-		return errors.Wrapf(sdkerrors.ErrInvalidRequest, err.Error())
+		return errors.Wrapf(err, "state validation failed")
 	}
 	if !isValid {
 		return errors.Wrapf(sdkerrors.ErrInvalidRequest, "state validation failed")
