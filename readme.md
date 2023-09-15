@@ -43,4 +43,6 @@ CosmoEthd query cosmoeth state-value "0xdac17f958d2ee523a2206206994597c13d831EC7
 - Setup real time threads for submitting latest state value to the chain (currently, state values stored into the chain are updated only by running the command manually by feeder)
 - Setup a system to incentivize feeders
 - Setup feeder whitelist and manage it through governance
+- Enable RPC node configurability in the feeder application, implement RPC node list management, and enable automatic switching to alternative nodes in case of issues.
+- Prevent submitting state value to the chain if the latest value fetched from RPC is same as the stored one.
 - Optimize state kvstore by decreasing the size of state metadata
