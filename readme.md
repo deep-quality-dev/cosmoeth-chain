@@ -1,52 +1,46 @@
-# cosmoeth
-**cosmoeth** is a blockchain built using Cosmos SDK and Tendermint and created with [Ignite CLI](https://ignite.com/cli).
+# CosmoEth and Feeder
+**CosmoEth** is a blockchain constructed using the Cosmos SDK and Tendermint. Its primary purpose is to securely store verified state values sourced from the Ethereum network.
 
-## Get started
+**Feeder**, on the other hand, is a Go (Golang) application designed to retrieve state values through Ethereum Virtual Machine (EVM) addresses and storage slot indices. Subsequently, it facilitates the submission of transactions to the CosmoEth chain, complete with state values and corresponding proofs, ensuring data integrity and security.
+
+## Get Started
+### 1. Setup CosmoEth localnet
+#### *Install ignite CLI*
+```
+curl https://get.ignite.com/cli\! | bash
+```
+Please ensure that the Ignite CLI version is at or above v0.27.1.
+
+#### *Spin up the localnet*
 
 ```
 ignite chain serve
 ```
-
 `serve` command installs dependencies, builds, initializes, and starts your blockchain in development.
 
-### Configure
-
-Your blockchain in development can be configured with `config.yml`. To learn more, see the [Ignite CLI docs](https://docs.ignite.com).
-
-### Web Frontend
-
-Ignite CLI has scaffolded a Vue.js-based web app in the `vue` directory. Run the following commands to install dependencies and start the app:
-
+### 2. Setup feeder
 ```
-cd vue
-npm install
-npm run serve
+make build-feeder
 ```
+Please ensure the feeder binary is created in /build folder.
 
-The frontend app is built using the `@starport/vue` and `@starport/vuex` packages. For details, see the [monorepo for Ignite front-end development](https://github.com/ignite/web).
-
-## Release
-To release a new version of your blockchain, create and push a new tag with `v` prefix. A new draft release with the configured targets will be created.
-
+## How to test
+### *Submit ethereum state to CosmoEth chain*
 ```
-git tag v0.1
-git push origin v0.1
+./build/feeder submit-state -address [evm address] -slot [hex presentation of slot index]
+```
+example => 
+```
+./build/feeder submit-state -address 0xdac17f958d2ee523a2206206994597c13d831ec7 -slot 0x1
 ```
 
-After a draft release is created, make your final changes from the release page and publish it.
-
-### Install
-To install the latest version of your blockchain node's binary, execute the following command on your machine:
-
+### *Query the storage from CosmoEth chain*
 ```
-curl https://get.ignite.com/username/CosmoEth@latest! | sudo bash
+CosmoEthd query cosmoeth state-value "0xdac17f958d2ee523a2206206994597c13d831EC7" "0x1"  
 ```
-`username/CosmoEth` should match the `username` and `repo_name` of the Github repository to which the source code was pushed. Learn more about [the install process](https://github.com/allinbits/starport-installer).
 
-## Learn more
-
-- [Ignite CLI](https://ignite.com/cli)
-- [Tutorials](https://docs.ignite.com/guide)
-- [Ignite CLI docs](https://docs.ignite.com)
-- [Cosmos SDK docs](https://docs.cosmos.network)
-- [Developer Chat](https://discord.gg/ignite)
+## Future improvements
+- Setup real time threads for submitting latest state value to the chain (currently, state values stored into the chain are updated only by running the command manually by feeder)
+- Setup a system to incentivize feeders
+- Setup feeder whitelist and manage it through governance
+- Optimize state kvstore by decreasing the size of state metadata
