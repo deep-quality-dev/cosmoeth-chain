@@ -37,7 +37,7 @@ func runTxCommandForStateSubmit(from, address, root, proof string, height uint64
 	var stderr bytes.Buffer
 
 	// Prepare the command with arguments
-	command := fmt.Sprintf("CosmoEthd tx cosmoeth add-state \"%s\" %d \"%sa\" '%s' --from %s -y --gas auto", address, height, root, proof, from)
+	command := fmt.Sprintf("CosmoEthd tx cosmoeth add-state \"%s\" %d \"%s\" '%s' --from %s -y --gas auto", address, height, root, proof, from)
 	cmd := exec.Command("bash", "-c", command)
 	cmd.Stdout = &stdout
 	cmd.Stderr = &stderr
