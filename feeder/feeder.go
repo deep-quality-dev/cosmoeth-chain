@@ -2,11 +2,13 @@ package main
 
 import (
 	"CosmoEth/feeder/evm"
+	"bytes"
 	"context"
 	"encoding/json"
 	"flag"
 	"fmt"
 	"os"
+	"os/exec"
 	"strings"
 )
 
@@ -27,6 +29,22 @@ func printUsage() {
 	fmt.Println()
 
 	fmt.Println("Use \"feederd [command] --help\" for more information about a command.")
+}
+
+// runTxCommandForStateSubmit handles tx broadcast to CosmoEth chain for submitting state information with proofs
+func runTxCommandForStateSubmit(from, address, root, proof string, height uint64) (string, string, error) {
+	var stdout bytes.Buffer
+	var stderr bytes.Buffer
+
+	// Prepare the command with arguments
+	command := fmt.Sprintf("CosmoEthd tx cosmoeth add-state \"%s\" %d \"%sa\" '%s' --from %s -y --gas auto", address, height, root, proof, from)
+	cmd := exec.Command("bash", "-c", command)
+	cmd.Stdout = &stdout
+	cmd.Stderr = &stderr
+
+	// Run the command and capture its output
+	err := cmd.Run()
+	return stdout.String(), stderr.String(), err
 }
 
 func main() {
@@ -55,14 +73,25 @@ func main() {
 					fmt.Println("Please provide a slot using the -slot flag.")
 				}
 
+				// fetch storage proof
 				slots := strings.Split(*slotStr, ",")
 				sproof, err := evm.GetProof(context.Background(), *addressStr, slots)
 				if err != nil {
 					panic(err)
 				}
 
-				bz, _ := json.Marshal(sproof)
-				fmt.Println(string(bz))
+				proofArg := ""
+				for _, proofResult := range sproof.StorageProof {
+					if len(proofArg) > 0 {
+						proofArg += ";"
+					}
+					bz, _ := json.Marshal(proofResult)
+					proofArg += string(bz)
+				}
+
+				stdOut, stdErr, _ := runTxCommandForStateSubmit("alice", sproof.Address.Hex(), sproof.StorageHash.Hex(), proofArg, sproof.Height.Uint64())
+				fmt.Println(stdOut)
+				fmt.Println(stdErr)
 			}
 
 		default:

@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"encoding/json"
+	"strings"
 
 	"cosmossdk.io/errors"
 
@@ -15,6 +16,7 @@ import (
 	"github.com/ethereum/go-ethereum/rlp"
 )
 
+// CheckStateValidity validates proofs for storage values
 func (k Keeper) CheckStateValidity(ctx sdk.Context, stateInfo types.StateInfo) (bool, error) {
 	var err error
 	var value []byte
@@ -45,6 +47,7 @@ func (k Keeper) AddStateInfo(ctx sdk.Context, address string, root string, heigh
 	return nil
 }
 
+// SetStateInfoWithValidation validates proofs for the storage value and store state info into kvstore
 func (k Keeper) SetStateInfoWithValidation(ctx sdk.Context, address string, root string, height uint64, storageProof types.StorageProof) error {
 	store := ctx.KVStore(k.storeKey)
 	prefixStore := prefix.NewStore(store, types.KeyPrefix(types.StateKey))
@@ -73,14 +76,16 @@ func (k Keeper) SetStateInfoWithValidation(ctx sdk.Context, address string, root
 	}
 
 	// save state info into the store
-	prefixStore.Set(append(types.KeyPrefix(address), types.KeyPrefix(storageProof.Key)...), []byte(rawStateInfo))
+	// store structure : state${address}${slot} => stateInfo
+	prefixStore.Set(append(types.KeyPrefix(strings.ToLower(address)), types.KeyPrefix(strings.ToLower(storageProof.Key))...), []byte(rawStateInfo))
 	return nil
 }
 
+// GetStateInfo queries state info for given address and storage slot
 func (k Keeper) GetStateInfo(ctx sdk.Context, address string, slot string) types.StateInfo {
 	store := ctx.KVStore(k.storeKey)
 	prefixStore := prefix.NewStore(store, types.KeyPrefix(types.StateKey))
-	rawInfo := prefixStore.Get(append(types.KeyPrefix(address), types.KeyPrefix(slot)...))
+	rawInfo := prefixStore.Get(append(types.KeyPrefix(strings.ToLower(address)), types.KeyPrefix(strings.ToLower(slot))...))
 
 	// unmarshal raw state info to proto object
 	stateInfo := types.StateInfo{}

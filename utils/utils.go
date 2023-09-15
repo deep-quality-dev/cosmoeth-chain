@@ -20,6 +20,9 @@ func IsValidHexString(hexString string) bool {
 	return re.MatchString(hexString)
 }
 
+// VerifyProof verifies that the path generated from key, following the nodes
+// in proof leads to a leaf with value, where the hashes are correct up to the
+// rootHash.
 func VerifyProof(rootHash common.Hash, key string, value []byte, proofs []string) (bool, error) {
 	proofDB := NewMemDB()
 	for _, proof := range proofs {
